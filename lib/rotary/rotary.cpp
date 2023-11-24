@@ -13,6 +13,8 @@ Rotary::Rotary() {
     _oldPosition = 0;
 }
 
+AiEsp32RotaryEncoder* Rotary::rotaryEncoder = nullptr;
+
 void Rotary::init() {
     // initialize rotary encoder
     _rotaryEncoder.begin();
