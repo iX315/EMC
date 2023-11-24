@@ -1,7 +1,5 @@
-//#include "tft.h"
-#include "controls.h"
-#include "rotary.h"
-#include "AiEsp32RotaryEncoder.h"
+#include <rotary.h>
+#include <ui.h>
 
 #include <SoftwareSerial.h>
 #include <MIDI.h>
@@ -13,15 +11,15 @@
 #define CALIBRATION_FILE "/TouchCalData1"
 #define REPEAT_CAL false
 
-MIDI_CREATE_DEFAULT_INSTANCE();
-
 TFT_eSPI tft = TFT_eSPI();
+
+Ui ui = Ui(&tft);
+Rotary rotary = Rotary();
+
+MIDI_CREATE_DEFAULT_INSTANCE();
 
 int currentControl = MIN_CONTROL;
 int currentChannel = MIN_CHANNEL;
-
-int newPosition = 15;
-int oldPosition = 0;
 
 ButtonWidget btnL = ButtonWidget(&tft);
 ButtonWidget btnOk = ButtonWidget(&tft);
@@ -40,28 +38,17 @@ int constrainValue(int value, int minValue, int maxValue) {
   }
 }
 
-void uiUpdate(int Value = 0, int Control = 0, int Channel = 0) {
-  tft.setCursor(0, 0);
-  tft.setTextSize(4);
-  tft.setTextColor(TFT_DARKGREEN, TFT_BLACK);
-  tft.print("Value: "); tft.println(Value);
-  tft.setTextSize(2);
-  tft.setTextColor(TFT_ORANGE, TFT_BLACK);
-  tft.print("Control: "); tft.println(Control);
-  tft.print("Channel: "); tft.println(Channel);
-}
-
 void btnL_pressAction(void) {
   if (btnL.justReleased()) {
     currentControl = constrainValue(currentControl--, MIN_CONTROL, MAX_CONTROL);
-    uiUpdate(newPosition, currentControl, currentChannel);
+    ui.toggleShouldUpdate();
   }
 }
 
 void btnR_pressAction(void) {
   if (btnR.justReleased()) {
     currentControl = constrainValue(currentControl++, MIN_CONTROL, MAX_CONTROL);
-    uiUpdate(newPosition, currentControl, currentChannel);
+    ui.toggleShouldUpdate();
   }
 }
 
@@ -76,47 +63,6 @@ void initBtns() {
   btnR.initButtonUL(200, 200, 40, 120, TFT_WHITE, TFT_BLACK, TFT_WHITE, ">", 3);
   btnR.drawButton(false);
   btnR.setPressAction(btnR_pressAction);
-}
-
-void initTFT() {
-  tft.init();
-  tft.setRotation(0);
-  tft.fillScreen(TFT_BLACK);
-  tft.setTextColor(TFT_WHITE);
-  tft.setCursor(0, 0);
-}
-
-AiEsp32RotaryEncoder rotaryEncoder = AiEsp32RotaryEncoder(ROTARY_ENCODER_A_PIN, ROTARY_ENCODER_B_PIN, ROTARY_ENCODER_BUTTON_PIN, ROTARY_ENCODER_VCC_PIN, ROTARY_ENCODER_STEPS);
-
-void IRAM_ATTR readEncoderISR() {
-  rotaryEncoder.readEncoder_ISR();
-}
-
-void initRotary() {
-  // initialize rotary encoder
-  rotaryEncoder.begin();
-
-  attachInterrupt(digitalPinToInterrupt(ROTARY_ENCODER_A_PIN), readEncoderISR, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(ROTARY_ENCODER_B_PIN), readEncoderISR, CHANGE);
-  // attachInterrupt(digitalPinToInterrupt(ROTARY_ENCODER_BUTTON_PIN), rotary_onButtonClick, RISING);
-
-  // max, min, circleValues true|false (when max go to min and vice versa)
-  rotaryEncoder.setBoundaries(MIN_VALUE, MAX_VALUE, true); 
-  // set the value - larger number = more accelearation; 0 or 1 means disabled acceleration
-  rotaryEncoder.setAcceleration(0);
-}
-
-void rotary_loop() {
-  // dont do anything unless value changed
-  if (!rotaryEncoder.encoderChanged()) {
-    return;
-  } else {
-    newPosition = rotaryEncoder.readEncoder();
-
-    MIDI.sendControlChange(currentControl, newPosition, currentChannel);
-
-    uiUpdate(newPosition, currentControl, currentChannel);
-  }
 }
 
 void touch_calibrate() {
@@ -204,18 +150,26 @@ void touchLoop() {
   }
 }
 
+void rotary_onValueChanged() {
+  MIDI.sendControlChange(currentControl, rotary.getEncoderValue(), currentChannel);
+  ui.toggleShouldUpdate();
+}
+
 void setup() {
-  initTFT();
+  Serial.println("Hello!");
+  ui.init();
   MIDI.begin(1);
   Serial.begin(115200);
 
-  initRotary();
-  uiUpdate();
+  rotary.init();
+
+  ui.update();
   initBtns();
   touch_calibrate();
 }
 
 void loop() {
-  rotary_loop();
+  rotary.loop(rotary_onValueChanged);
   touchLoop();
+  ui.update(rotary.getEncoderValue(), currentControl, currentChannel);
 }

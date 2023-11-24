@@ -1,6 +1,0 @@
-#define MIN_CONTROL 0
-#define MAX_CONTROL 127
-#define MIN_VALUE 0
-#define MAX_VALUE 127
-#define MIN_CHANNEL 1
-#define MAX_CHANNEL 16
