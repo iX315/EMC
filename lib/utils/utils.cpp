@@ -1,7 +1,6 @@
-#ifndef UTILS_H
-#define UTILS_H
+#include "utils.hpp"
 
-int clamp(int value, int minValue, int maxValue, bool wrap = false) {
+int clamp(int value, int minValue, int maxValue, bool wrap) {
   if (value < minValue) {
     return wrap ? maxValue : minValue;
   } else if (value > maxValue) {
@@ -9,5 +8,3 @@ int clamp(int value, int minValue, int maxValue, bool wrap = false) {
   }
   return value;
 }
-
-#endif // UTILS_H

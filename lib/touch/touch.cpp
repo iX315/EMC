@@ -1,4 +1,4 @@
-#include "touch.h"
+#include "touch.hpp"
 
 Touch::Touch(TFT_eSPI *tft, Ui *ui) {
   _tft = tft;

@@ -1,6 +1,6 @@
-#include <rotary.h>
-#include <ui.h>
-#include <touch.h>
+#include <rotary.hpp>
+#include <ui.hpp>
+#include <touch.hpp>
 
 #include <SoftwareSerial.h>
 #include <MIDI.h>

@@ -1,6 +1,4 @@
-#include "ui.h"
-#include <TFT_eSPI.h>
-#include <TFT_eWidget.h>
+#include "ui.hpp"
 
 Ui::Ui(TFT_eSPI *tft, int *currentControl, int *currentChannel)
   : btnL(tft), btnOk(tft), btnR(tft) {

@@ -1,8 +1,8 @@
 #include <SPI.h>
 #include <TFT_eSPI.h>
 #include <TFT_eWidget.h>
-#include "../constants.h"
-#include "../utils.h"
+#include <utils.hpp>
+#include "../constants.hpp"
 
 #ifndef UI_H
 #define UI_H

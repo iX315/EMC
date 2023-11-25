@@ -1,8 +1,8 @@
 #include <TFT_eSPI.h>
 #include <TFT_eWidget.h>
 #include "AiEsp32RotaryEncoder.h"
-#include "../constants.h"
-#include "../utils.h"
+#include <utils.hpp>
+#include "../constants.hpp"
 
 #ifndef ROTARY_H
 #define ROTARY_H

@@ -1,4 +1,4 @@
-#include "rotary.h"
+#include "rotary.hpp"
 
 Rotary::Rotary() {
     _rotaryEncoder = AiEsp32RotaryEncoder(
