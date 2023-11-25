@@ -1,11 +1,11 @@
-#include <rotary.hpp>
-#include <ui.hpp>
-#include <touch.hpp>
-
-#include <SoftwareSerial.h>
 #include <MIDI.h>
 #include <SPI.h>
+#include <SoftwareSerial.h>
 #include <TFT_eSPI.h>
+
+#include <rotary.hpp>
+#include <touch.hpp>
+#include <ui.hpp>
 
 int currentControl = MIN_CONTROL;
 int currentChannel = MIN_CHANNEL;
@@ -25,7 +25,7 @@ void rotary_onValueChanged() {
 
 static void btnL_pressAction(void) {
   if (ui.btnL.justReleased()) {
-   ui.decreaseControl();
+    ui.decreaseControl();
   }
 }
 
