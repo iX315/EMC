@@ -20,9 +20,6 @@ public:
   ButtonWidget btnOk;
   ButtonWidget btnR;
 
-  void decreaseControl();
-  void increaseControl();
-
   int buttonCount() { return _buttonCount; };
 
   ButtonWidget buttons[3] = {btnL, btnOk, btnR};
@@ -30,8 +27,6 @@ public:
 private:
   TFT_eSPI *_tft;
   bool _shouldUpdate;
-  int _currentControl;
-  int _currentChannel;
 
   uint8_t _buttonCount = 3;
 };

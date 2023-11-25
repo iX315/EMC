@@ -4,9 +4,6 @@ Ui::Ui(TFT_eSPI *tft, int *currentControl, int *currentChannel) : btnL(tft), btn
   _tft = tft;
   _shouldUpdate = false;
 
-  _currentControl = *currentControl;
-  _currentChannel = *currentChannel;
-
   _buttonCount = 3;
 }
 
@@ -35,16 +32,6 @@ void Ui::update(int Value, int Control, int Channel) {
   _tft->println(Control);
   _tft->print("Channel: ");
   _tft->println(Channel);
-  toggleShouldUpdate();
-}
-
-void Ui::decreaseControl() {
-  _currentControl = clamp(_currentControl--, MIN_CONTROL, MAX_CONTROL, true);
-  toggleShouldUpdate();
-}
-
-void Ui::increaseControl() {
-  _currentControl = clamp(_currentControl++, MIN_CONTROL, MAX_CONTROL, true);
   toggleShouldUpdate();
 }
 

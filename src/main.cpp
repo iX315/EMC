@@ -25,13 +25,15 @@ void rotary_onValueChanged() {
 
 static void btnL_pressAction(void) {
   if (ui.btnL.justReleased()) {
-    ui.decreaseControl();
+    currentControl = clamp(currentControl--, MIN_CONTROL, MAX_CONTROL, true);
+    ui.toggleShouldUpdate();
   }
 }
 
 static void btnR_pressAction(void) {
   if (ui.btnR.justReleased()) {
-    ui.increaseControl();
+    currentControl = clamp(currentControl++, MIN_CONTROL, MAX_CONTROL, true);
+    ui.toggleShouldUpdate();
   }
 }
 
