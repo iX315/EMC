@@ -26,10 +26,7 @@ void Rotary::init() {
 int Rotary::getEncoderValue() { return _newPosition; }
 
 void Rotary::loop(void (*callback)()) {
-  // dont do anything unless value changed
-  if (!_rotaryEncoder.encoderChanged()) {
-    return;
-  } else {
+  if (_rotaryEncoder.encoderChanged()) {
     _newPosition = _rotaryEncoder.readEncoder();
 
     callback();

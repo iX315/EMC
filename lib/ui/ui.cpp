@@ -3,7 +3,6 @@
 Ui::Ui(TFT_eSPI *tft, int *currentControl, int *currentChannel) : btnL(tft), btnOk(tft), btnR(tft) {
   _tft = tft;
   _shouldUpdate = false;
-
   _buttonCount = 3;
 }
 
@@ -15,6 +14,16 @@ void Ui::init() {
   _tft->fillScreen(TFT_BLACK);
   _tft->setTextColor(TFT_WHITE);
   _tft->setCursor(0, 0);
+  update(0, 0, 0);
+}
+
+String newLinePrint(int value) {
+  if (value < 10) {
+      return String(value) + "  ";
+    } else if (value < 100) {
+      return String(value) + " ";
+    }
+    return String(value);
 }
 
 void Ui::update(int Value, int Control, int Channel) {
@@ -24,14 +33,11 @@ void Ui::update(int Value, int Control, int Channel) {
   _tft->setCursor(0, 0);
   _tft->setTextSize(4);
   _tft->setTextColor(TFT_DARKGREEN, TFT_BLACK);
-  _tft->print("Value: ");
-  _tft->println(Value);
-  _tft->setTextSize(2);
+  _tft->println("Value: " + newLinePrint(Value));
+  _tft->setTextSize(3);
   _tft->setTextColor(TFT_ORANGE, TFT_BLACK);
-  _tft->print("Control: ");
-  _tft->println(Control);
-  _tft->print("Channel: ");
-  _tft->println(Channel);
+  _tft->println("Control: " + newLinePrint(Control));
+  _tft->println("Channel: " + newLinePrint(Channel));
   toggleShouldUpdate();
 }
 
