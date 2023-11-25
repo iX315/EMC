@@ -1,5 +1,0 @@
-#define ROTARY_ENCODER_A_PIN      PIN_D3 // CLK (A pin)
-#define ROTARY_ENCODER_B_PIN      PIN_D0 // DT (B pin)
-#define ROTARY_ENCODER_BUTTON_PIN -1
-#define ROTARY_ENCODER_VCC_PIN    -1
-#define ROTARY_ENCODER_STEPS      1
