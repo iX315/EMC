@@ -33,7 +33,7 @@ int Rotary::getEncoderValue() {
     return _newPosition;
 }
 
-void Rotary::loop(actionCallback callback) {
+void Rotary::loop(void (*callback)()) {
     // dont do anything unless value changed
     if (!_rotaryEncoder.encoderChanged()) {
         return;
