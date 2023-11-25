@@ -1,10 +1,11 @@
-#ifndef UI_H
-#define UI_H
-
-#include "tft.h"
 #include <SPI.h>
 #include <TFT_eSPI.h>
 #include <TFT_eWidget.h>
+#include "../constants.h"
+#include "../utils.h"
+
+#ifndef UI_H
+#define UI_H
 
 class Ui {
 public:
@@ -13,21 +14,21 @@ public:
     void toggleShouldUpdate();
     void init();
     void update(int Value = 0, int Control = 0, int Channel = 0);
-    void initButtons();
-    void btnL_pressAction(void);
-    void btnR_pressAction(void);
+    void initButtons(actionCallback btnL_pressAction, actionCallback btnR_pressAction);
 
-    actionCallback callback = noop;
+    ButtonWidget btnL;
+    ButtonWidget btnOk;
+    ButtonWidget btnR;
+
+    void decreaseControl();
+    void increaseControl();
 
 private:
     TFT_eSPI *_tft;
     bool _shouldUpdate;
-    int *_currentControl;
-    int *_currentChannel;
-    ButtonWidget _btnL;
-    ButtonWidget _btnOk;
-    ButtonWidget _btnR;
-    ButtonWidget* _btn;
+    int _currentControl;
+    int _currentChannel;
+
     uint8_t _buttonCount;
 };
 

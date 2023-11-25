@@ -1,19 +1,16 @@
 #include "ui.h"
+#include <TFT_eSPI.h>
 #include <TFT_eWidget.h>
 
-Ui::Ui(TFT_eSPI *tft, int *currentControl, int *currentChannel) {
+Ui::Ui(TFT_eSPI *tft, int *currentControl, int *currentChannel)
+  : btnL(tft), btnOk(tft), btnR(tft) {
     _tft = tft;
     _shouldUpdate = false;
 
-    _currentControl = currentControl;
-    _currentChannel = currentChannel;
+    _currentControl = *currentControl;
+    _currentChannel = *currentChannel;
 
-    _btnL = ButtonWidget(&tft);
-    _btnOk = ButtonWidget(&tft);
-    _btnR = ButtonWidget(&tft);
-
-    _btn[] = {&_btnL , &_btnR};;
-    _buttonCount = sizeof(_btn) / sizeof(_btn[0]);
+    _buttonCount = 3;
 }
 
 void Ui::toggleShouldUpdate() {
@@ -30,7 +27,7 @@ void Ui::init() {
 
 void Ui::update(int Value, int Control, int Channel) {
     if (!_shouldUpdate) {
-        return;
+      return;
     }
     _tft->setCursor(0, 0);
     _tft->setTextSize(4);
@@ -43,39 +40,25 @@ void Ui::update(int Value, int Control, int Channel) {
     toggleShouldUpdate();
 }
 
-int constrainValue(int value, int minValue, int maxValue) {
-  if (value < minValue) {
-    return maxValue;
-  } else if (value > maxValue) {
-    return minValue;
-  } else {
-    return value;
-  }
+void Ui::decreaseControl() {
+  _currentControl = clamp(_currentControl--, MIN_CONTROL, MAX_CONTROL, true);
+  toggleShouldUpdate();
 }
 
-void Ui::btnL_pressAction(void) {
-  if (_btnL.justReleased()) {
-    _currentControl = constrainValue(_currentControl--, MIN_CONTROL, MAX_CONTROL);
-    toggleShouldUpdate();
-  }
+void Ui::increaseControl() {
+  _currentControl = clamp(_currentControl++, MIN_CONTROL, MAX_CONTROL, true);
+  toggleShouldUpdate();
 }
 
-void Ui::btnR_pressAction(void) {
-  if (_btnR.justReleased()) {
-    _currentControl = constrainValue(_currentControl++, MIN_CONTROL, MAX_CONTROL);
-    toggleShouldUpdate();
-  }
-}
+void Ui::initButtons(actionCallback btnL_pressAction, actionCallback btnR_pressAction) {
+  btnL.initButtonUL(0, 200, 40, 120, TFT_WHITE, TFT_BLACK, TFT_WHITE, "<", 3);
+  btnL.drawButton(false);
+  btnL.setPressAction(btnL_pressAction);
 
-void Ui::initButtons() {
-  _btnL.initButtonUL(0, 200, 40, 120, TFT_WHITE, TFT_BLACK, TFT_WHITE, "<", 3);
-  _btnL.drawButton(false);
-  _btnL.setPressAction(btnL_pressAction);
+  btnOk.initButtonUL(60, 200, 120, 120, TFT_WHITE, TFT_BLACK, TFT_WHITE, "OK", 3);
+  btnOk.drawButton(false);
 
-  _btnOk.initButtonUL(60, 200, 120, 120, TFT_WHITE, TFT_BLACK, TFT_WHITE, "OK", 3);
-  _btnOk.drawButton(false);
-
-  _btnR.initButtonUL(200, 200, 40, 120, TFT_WHITE, TFT_BLACK, TFT_WHITE, ">", 3);
-  _btnR.drawButton(false);
-  _btnR.setPressAction(btnR_pressAction);
+  btnR.initButtonUL(200, 200, 40, 120, TFT_WHITE, TFT_BLACK, TFT_WHITE, ">", 3);
+  btnR.drawButton(false);
+  btnR.setPressAction(btnR_pressAction);
 }

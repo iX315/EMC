@@ -23,6 +23,18 @@ void rotary_onValueChanged() {
   ui.toggleShouldUpdate();
 }
 
+static void btnL_pressAction(void) {
+  if (ui.btnL.justReleased()) {
+   ui.decreaseControl();
+  }
+}
+
+static void btnR_pressAction(void) {
+  if (ui.btnR.justReleased()) {
+    ui.increaseControl();
+  }
+}
+
 void setup() {
   Serial.println("Hello!");
   ui.init();
@@ -32,7 +44,7 @@ void setup() {
   rotary.init();
 
   ui.update();
-  ui.initButtons();
+  ui.initButtons(btnL_pressAction, btnR_pressAction);
   touch.calibrate();
 }
 
