@@ -20,14 +20,20 @@ public:
   ButtonWidget btnOk;
   ButtonWidget btnR;
 
-  int buttonCount() { return _buttonCount; };
+  int getButtonCount() { return _buttonCount; };
 
-  ButtonWidget buttons[3] = {btnL, btnOk, btnR};
+  ButtonWidget *getButton(int index) {
+    if (index < 0 || index >= _buttonCount) {
+      return nullptr;
+    }
+    return &_buttons[index];
+  };
 
 private:
   TFT_eSPI *_tft;
   bool _shouldUpdate;
 
+  ButtonWidget _buttons[3] = {btnL, btnOk, btnR};
   uint8_t _buttonCount = 3;
 };
 

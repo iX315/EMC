@@ -75,8 +75,8 @@ void Touch::loop() {
     // Pressed will be set true if there is a valid touch on the screen
     bool pressed = _tft->getTouch(&t_x, &t_y);
     scanTime = millis();
-    for (uint8_t b = 0; b < _ui->buttonCount(); b++) {
-      ButtonWidget Btn = _ui->buttons[b];
+    for (uint8_t b = 0; b < _ui->getButtonCount(); b++) {
+      ButtonWidget Btn = _ui->getButton(b);
       if (pressed) {
         if (Btn.contains(t_x, t_y)) {
           Btn.press(true);
