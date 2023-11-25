@@ -14,7 +14,7 @@ TFT_eSPI tft = TFT_eSPI();
 
 Ui ui = Ui(&tft, &currentControl, &currentChannel);
 Rotary rotary = Rotary();
-Touch touch = Touch();
+Touch touch = Touch(&tft, &ui);
 
 MIDI_CREATE_DEFAULT_INSTANCE();
 

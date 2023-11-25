@@ -1,3 +1,8 @@
+#include <UI.h>
+#include <FS.h>
+#include <SPI.h>
+#include <TFT_eSPI.h>
+
 #ifndef TOUCH_H
 #define TOUCH_H
 
@@ -6,11 +11,12 @@
 
 class Touch {
 public:
-    Touch();
+    Touch(TFT_eSPI *tft, Ui *ui);
     void calibrate();
     void loop();
 private:
-    // Private members and methods
+    TFT_eSPI *_tft;
+    Ui *_ui;
 };
 
 #endif // TOUCH_H

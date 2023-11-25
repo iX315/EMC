@@ -23,13 +23,17 @@ public:
     void decreaseControl();
     void increaseControl();
 
+    int buttonCount() { return _buttonCount; };
+
+    ButtonWidget buttons[3] = { btnL, btnOk, btnR };
+
 private:
     TFT_eSPI *_tft;
     bool _shouldUpdate;
     int _currentControl;
     int _currentChannel;
 
-    uint8_t _buttonCount;
+    uint8_t _buttonCount = 3;
 };
 
 #endif // UI_H

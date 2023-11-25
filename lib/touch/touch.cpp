@@ -1,7 +1,9 @@
 #include "touch.h"
-#include <FS.h>
 
-Touch::Touch() {};
+Touch::Touch(TFT_eSPI *tft, Ui *ui) {
+  _tft = tft;
+  _ui = ui;
+};
 
 void Touch::calibrate() {
   uint16_t calData[5];
@@ -31,29 +33,29 @@ void Touch::calibrate() {
 
   if (calDataOK && !REPEAT_CAL) {
     // calibration data valid
-    tft.setTouch(calData);
+    _tft->setTouch(calData);
   } else {
     // data not valid so recalibrate
-    tft.fillScreen(TFT_BLACK);
-    tft.setCursor(20, 0);
-    tft.setTextFont(2);
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    _tft->fillScreen(TFT_BLACK);
+    _tft->setCursor(20, 0);
+    _tft->setTextFont(2);
+    _tft->setTextSize(1);
+    _tft->setTextColor(TFT_WHITE, TFT_BLACK);
 
-    tft.println("Touch corners as indicated");
+    _tft->println("Touch corners as indicated");
 
-    tft.setTextFont(1);
-    tft.println();
+    _tft->setTextFont(1);
+    _tft->println();
 
     if (REPEAT_CAL) {
-      tft.setTextColor(TFT_RED, TFT_BLACK);
-      tft.println("Set REPEAT_CAL to false to stop this running again!");
+      _tft->setTextColor(TFT_RED, TFT_BLACK);
+      _tft->println("Set REPEAT_CAL to false to stop this running again!");
     }
 
-    tft.calibrateTouch(calData, TFT_MAGENTA, TFT_BLACK, 15);
+    _tft->calibrateTouch(calData, TFT_MAGENTA, TFT_BLACK, 15);
 
-    tft.setTextColor(TFT_GREEN, TFT_BLACK);
-    tft.println("Calibration complete!");
+    _tft->setTextColor(TFT_GREEN, TFT_BLACK);
+    _tft->println("Calibration complete!");
 
     // store data
     File f = LittleFS.open(CALIBRATION_FILE, "w");
@@ -71,18 +73,18 @@ void Touch::loop() {
   // Scan keys every 50ms at most
   if (millis() - scanTime >= 50) {
     // Pressed will be set true if there is a valid touch on the screen
-    bool pressed = tft.getTouch(&t_x, &t_y);
+    bool pressed = _tft->getTouch(&t_x, &t_y);
     scanTime = millis();
-    for (uint8_t b = 0; b < buttonCount; b++) {
+    for (uint8_t b = 0; b < _ui->buttonCount(); b++) {
+      ButtonWidget Btn = _ui->buttons[b];
       if (pressed) {
-        if (btn[b]->contains(t_x, t_y)) {
-          btn[b]->press(true);
-          btn[b]->pressAction();
+        if (Btn.contains(t_x, t_y)) {
+          Btn.press(true);
+          Btn.pressAction();
         }
-      }
-      else {
-        btn[b]->press(false);
-        btn[b]->releaseAction();
+      } else {
+        Btn.press(false);
+        Btn.releaseAction();
       }
     }
   }
