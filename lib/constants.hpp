@@ -20,7 +20,13 @@
 #define NUM_LEDS 11
 #define LED_PIN 2 // D4
 
+#ifdef ESP8266
 #define POTENTIOMETER_PIN PIN_A0
+#endif
+
+#ifdef ESP32
+#define POTENTIOMETER_PIN 15
+#endif
 
 //#define USE_UI
 //#define USE_ROTARY

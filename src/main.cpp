@@ -1,6 +1,5 @@
 #include <MIDI.h>
 #include <SPI.h>
-#include <SoftwareSerial.h>
 #include <TFT_eSPI.h>
 
 #include <peak.hpp>
