@@ -10,7 +10,7 @@ private:
 
 public:
   Peak();
-  void loop(int velocity);
+  void loop(int value);
 };
 
 #endif // PEAK_H

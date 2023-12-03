@@ -1,6 +1,7 @@
 #include <MIDI.h>
 #include <SPI.h>
 #include <TFT_eSPI.h>
+#include <HardwareSerial.h>
 
 #include <peak.hpp>
 #include <potentiometer.hpp>
@@ -8,6 +9,7 @@
 #include <touch.hpp>
 #include <ui.hpp>
 
+int lastOutValue = MIN_VALUE;
 int currentOutValue = MIN_VALUE;
 int currentOutControl = MIN_CONTROL;
 int currentOutChannel = MIN_CHANNEL;
@@ -17,7 +19,10 @@ int currentInChannel = MIN_CHANNEL;
 
 TFT_eSPI tft = TFT_eSPI();
 
-MIDI_CREATE_DEFAULT_INSTANCE();
+struct CustomBaud : public midi::DefaultSettings{
+    static const long BaudRate = 115200; // Baud rate for hairless
+};
+MIDI_CREATE_CUSTOM_INSTANCE(HardwareSerial, Serial, MIDI2, CustomBaud);
 
 #ifdef USE_UI
 Ui ui = Ui(&tft, &currentOutControl, &currentOutChannel);
@@ -59,11 +64,16 @@ static void btnR_pressAction(void) {
 }
 #endif
 
-void handleNoteOn(byte channel, byte pitch, byte velocity) { currentInValue = velocity; }
+void handleAfterTouchChannel(byte channel, byte value) {
+#ifdef DEBUG_MIDI
+  Serial.println("AfterTouchChannel: " + String(channel) + ", " + String(value));
+#endif
+  currentInValue = value;
+}
 
 void setup() {
-  Serial.begin(115200);
-  Serial.println("Hello!");
+  MIDI2.setHandleAfterTouchChannel(handleAfterTouchChannel);
+  MIDI2.begin(MIDI_CHANNEL_OMNI); // read all incoming messages
 
 #ifdef USE_TOUCH
   touch.calibrate();
@@ -77,16 +87,13 @@ void setup() {
 #endif
 #endif
 
-  MIDI.begin(currentInChannel);
-  MIDI.setHandleNoteOn(handleNoteOn);
-
 #ifdef USE_ROTARY
   rotary.init();
 #endif
 }
 
 void loop() {
-  MIDI.read();
+  MIDI2.read();
 
 #ifdef USE_ROTARY
   rotary.loop(rotary_onValueChanged);
@@ -109,5 +116,8 @@ void loop() {
   ui.update(currentOutValue, currentOutControl, currentOutChannel);
 #endif
 
-  MIDI.sendControlChange(currentOutControl, currentOutValue, currentOutChannel);
+  if (currentOutValue != lastOutValue) {
+    lastOutValue = currentOutValue;
+    MIDI2.sendPitchBend(currentOutValue, currentOutChannel);
+  }
 }

@@ -1,5 +1,13 @@
 #include "potentiometer.hpp"
 
+#ifdef ESP8266
+#define MAX_RESOLUTION 1023
+#endif
+
+#ifdef ESP32
+#define MAX_RESOLUTION 4095
+#endif
+
 Potentiometer::Potentiometer() {
 }
 
@@ -8,5 +16,5 @@ int Potentiometer::readValue() {
 }
 
 int Potentiometer::readMappedValue(int min, int max) {
-  return map(analogRead(POTENTIOMETER_PIN), 0, 1023, min, max);
+  return map(analogRead(POTENTIOMETER_PIN), 0, MAX_RESOLUTION, min, max);
 }

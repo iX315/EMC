@@ -24,6 +24,8 @@
         "algorithm": "cpp",
         "chrono": "cpp",
         "random": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "*.ipp": "cpp",
+        "memory": "cpp"
     }
 }
