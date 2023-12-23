@@ -9,7 +9,7 @@
 
 class Ui {
 public:
-  Ui(TFT_eSPI *tft, int *currentControl, int *currentChannel);
+  Ui(TFT_eSPI *tft, int *currentOutControl, int *currentOutChannel);
 
   void toggleShouldUpdate();
   void init();
