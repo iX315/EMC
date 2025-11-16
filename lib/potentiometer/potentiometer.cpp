@@ -7,74 +7,102 @@ Potentiometer::Potentiometer() {
 }
 
 bool Potentiometer::isTouched() {
-  return analogRead(POTENTIOMETER_TOUCH);
+  return touchSense.isTouched();
 }
 
 int Potentiometer::readValue() {
-  return analogRead(POTENTIOMETER_PIN);
+  int reading = analogRead(POTENTIOMETER_PIN);
+  return int( (filterAmt * lastPosition) + ( (1.0 - filterAmt) * int(reading / 4 )) );
 }
 
-int Potentiometer::readMappedValue(int min, int max) {
-  return map(readValue(), 0, MAX_RESOLUTION, min, max);
+int Potentiometer::midiValueToPotValue(int value) {
+  return map(value, MIN_VALUE, MAX_VALUE, minCalValue, maxCalValue);
 }
 
-bool Potentiometer::shouldMove() {
-  if (isTouched()) {
-    return false;
-  }
-  if (moveToValue == -1) {
-    return false;
-  }
-  return abs(readValue() - moveToValue) > HYSTERESIS;
+int Potentiometer::potValueToMidiValue(int value) {
+  return map(value, minCalValue, maxCalValue, MIN_VALUE, MAX_VALUE);
 }
 
-void Potentiometer::loop() {
-  if (shouldMove()) {
-    if (readValue() < moveToValue) {
-      digitalWrite(L293D_1A, LOW);
-      digitalWrite(L293D_2A, HIGH);
-    }
+void Potentiometer::disableMotor() {
+  motorReleaseState = true;
+  digitalWrite(L293D_1A, LOW);
+  digitalWrite(L293D_2A, LOW);
+}
 
-    if (readValue() > moveToValue) {
-      digitalWrite(L293D_1A, HIGH);
-      digitalWrite(L293D_2A, LOW);
-    }
+void Potentiometer::enableMotor(int direction) {
+  motorReleaseState = false;
+  if (direction > 0) {
+    digitalWrite(L293D_1A, HIGH);
+    digitalWrite(L293D_2A, LOW);
   } else {
     digitalWrite(L293D_1A, LOW);
-    digitalWrite(L293D_2A, LOW);
-    moveToValue = -1;
+    digitalWrite(L293D_2A, HIGH);
   }
-
-  lastValue = readValue();
 }
 
-void Potentiometer::motorMove(int value) {
-  int newMoveValue = map(value, MIN_VALUE, MAX_VALUE, minValue, maxValue);
-  moveToValue = shouldMove() ? newMoveValue : -1;
+int Potentiometer::loop(int newPosition = 0) {
+  if (isTouched()) {
+    disableMotor();
+    return readValue();
+  }
+
+#ifdef DEBUG
+  Serial.println("pot loop: " + String(newPosition));
+#endif
+
+  if (abs(position - newPosition) > HYSTERESIS) {
+    if (motorReleaseState == false) {
+      goToPosition(newPosition);
+    }
+  }
+
+  return readValue();
 }
 
-bool Potentiometer::hasChanged() {
-  if (lastValue != readValue()) {
-    lastValue = readValue();
-    return true;
+void Potentiometer::goToPosition(int newPosition = 0) {
+#ifdef DEBUG
+  Serial.println("goToPosition: " + String(newPosition) + " from " + String(readValue()));
+#endif
+
+  if (abs(readValue() - newPosition) > 4) {
+    if (readValue() > newPosition) {
+      speed = 2.25 * abs(readValue() - newPosition) / MAX_VALUE + 0.2;
+      speed = constrain(speed, -1.0, 1.0);
+      if (speed > 0.0) {
+        enableMotor(-1);
+      }
+    }
+    if (readValue() < newPosition) {
+      speed = 2.25 * abs(readValue() - newPosition) / MAX_VALUE - 0.2;
+      speed = constrain(speed, -1.0, 1.0);
+      if (speed > 0.0) {
+        enableMotor(1);
+      }
+    }
+  } else {
+    disableMotor();
   }
-  return false;
 }
 
 void Potentiometer::calibrate() {
-  //Send fader to the top and read max position
-  digitalWrite(L293D_1A, LOW);
-  digitalWrite(L293D_2A, HIGH);
-  delay(1000);
-  maxValue = readValue();
-
   //Send fader to the bottom and read max position
-  digitalWrite(L293D_1A, HIGH);
-  digitalWrite(L293D_2A, LOW);
+  enableMotor(-1);
   delay(1000);
-  
-  minValue = readValue();
+  // read raw value from potentiometer
+  minCalValue = analogRead(POTENTIOMETER_PIN);
 
-  digitalWrite(L293D_1A, LOW);
-  digitalWrite(L293D_2A, LOW);
+  //Send fader to the top and read max position
+  enableMotor(1);
+  delay(1000);
+  // read raw value from potentiometer
+  maxCalValue = analogRead(POTENTIOMETER_PIN);
+
+  // go back to the middle - test
+  goToPosition(maxCalValue / 2);
+
+#ifdef DEBUG
+  Serial.println("Calibrated potentiometer");
+  Serial.println("minCalValue: " + String(minCalValue));
+  Serial.println("maxCalValue: " + String(maxCalValue));
+#endif
 }

@@ -63,23 +63,20 @@ static void btnR_pressAction(void) {
 #endif
 
 void handleAfterTouchChannel(byte channel, byte value) {
-#ifdef DEBUG_MIDI
-  Serial.println("AfterTouchChannel: " + String(channel) + ", " + String(value));
-#endif
   currentInAfterTouch = value;
 }
 
 void handlePitchBend(byte channel, int value) {
-#ifdef DEBUG_MIDI
-  Serial.println("PitchBend: " + String(channel) + ", " + String(value));
-#endif
   currentInPitch = value;
 }
 
 void setup() {
   MIDI2.setHandleAfterTouchChannel(handleAfterTouchChannel);
   MIDI2.setHandlePitchBend(handlePitchBend);
-  MIDI2.begin(MIDI_CHANNEL_OMNI); // read all incoming messages
+  // read all incoming messages
+  MIDI2.begin(MIDI_CHANNEL_OMNI);
+  // disable thru mirroring
+  MIDI2.turnThruOff();
 
 #ifdef USE_POTENTIOMETER
   potentiometer.calibrate();
@@ -119,8 +116,9 @@ void loop() {
 #endif
 
 #ifdef USE_POTENTIOMETER
-  potentiometer.motorMove(currentInPitch);
-  potentiometer.loop();
+  //int motorMoveValue = potentiometer.midiValueToPotValue(currentInPitch);
+  //int potValue = potentiometer.loop(motorMoveValue);
+  //currentOutPitch = potentiometer.potValueToMidiValue(potValue);
 #endif
 
 #ifdef USE_PEAK

@@ -26,6 +26,8 @@
         "random": "cpp",
         "limits": "cpp",
         "*.ipp": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "istream": "cpp",
+        "regex": "cpp"
     }
 }
