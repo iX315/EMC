@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "author": "Jury Giannelli",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": -67.2, "left": -225.56, "attrs": {} },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb1",
+      "top": 57.6,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb2",
+      "top": 38.4,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb3",
+      "top": 19.2,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    { "type": "wokwi-neopixel", "id": "rgb4", "top": 0, "left": -93.3, "rotate": 90, "attrs": {} },
+    {
+      "type": "wokwi-slide-potentiometer",
+      "id": "pot2",
+      "top": -81.2,
+      "left": -130.4,
+      "rotate": 270,
+      "attrs": { "travelLength": "30" }
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb5",
+      "top": -19.2,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb6",
+      "top": -38.4,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb7",
+      "top": -57.6,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb8",
+      "top": -76.8,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb9",
+      "top": -96,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb10",
+      "top": -115.2,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-neopixel",
+      "id": "rgb11",
+      "top": -134.4,
+      "left": -93.3,
+      "rotate": 90,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:4", "rgb1:DIN", "green", [] ],
+    [ "rgb2:DOUT", "rgb3:DIN", "green", [] ],
+    [ "rgb3:DOUT", "rgb4:DIN", "green", [] ],
+    [ "rgb1:DOUT", "rgb2:DIN", "green", [] ],
+    [ "rgb1:VDD", "rgb2:VSS", "red", [] ],
+    [ "rgb2:VDD", "rgb3:VSS", "red", [] ],
+    [ "rgb3:VDD", "rgb4:VSS", "red", [] ],
+    [ "esp:5V", "rgb1:VSS", "red", [] ],
+    [ "pot2:GND", "esp:GND.3", "black", [] ],
+    [ "pot2:SIG", "esp:15", "green", [] ],
+    [ "rgb6:DOUT", "rgb7:DIN", "green", [] ],
+    [ "rgb7:DOUT", "rgb8:DIN", "green", [] ],
+    [ "rgb5:DOUT", "rgb6:DIN", "green", [] ],
+    [ "rgb5:VDD", "rgb6:VSS", "red", [] ],
+    [ "rgb6:VDD", "rgb7:VSS", "red", [] ],
+    [ "rgb7:VDD", "rgb8:VSS", "red", [] ],
+    [ "rgb4:VDD", "rgb5:VSS", "red", [] ],
+    [ "rgb5:DIN", "rgb4:DOUT", "green", [] ],
+    [ "rgb8:DOUT", "rgb9:DIN", "green", [] ],
+    [ "rgb8:VDD", "rgb9:VSS", "red", [] ],
+    [ "rgb9:DOUT", "rgb10:DIN", "green", [] ],
+    [ "rgb9:VDD", "rgb10:VSS", "red", [] ],
+    [ "rgb11:DIN", "rgb10:DOUT", "green", [] ],
+    [ "rgb11:VSS", "rgb10:VDD", "red", [] ],
+    [ "pot2:VCC", "esp:5V", "red", [] ]
+  ],
+  "dependencies": {}
+}

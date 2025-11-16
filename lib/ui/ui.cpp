@@ -1,6 +1,6 @@
 #include "ui.hpp"
 
-Ui::Ui(TFT_eSPI *tft, int *currentControl, int *currentChannel) : btnL(tft), btnOk(tft), btnR(tft) {
+Ui::Ui(TFT_eSPI *tft, int *currentOutControl, int *currentOutChannel) : btnL(tft), btnOk(tft), btnR(tft) {
   _tft = tft;
   _shouldUpdate = false;
   _buttonCount = 3;
